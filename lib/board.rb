@@ -32,7 +32,6 @@ class Board
 
   def make_move(start_pos, current_player_name)
     other_store = get_other_store_idx(current_player_name)
-    other_store == 13 ? current_store = 6 : current_store = 13
 
     stones = @cups[start_pos].length
     @cups[start_pos] = []
@@ -88,8 +87,18 @@ class Board
   end
 
   def one_side_empty?
+    return true if @cups[0..5].all? {|cup| cup.empty?}
+    return true if @cups[7..12].all? {|cup| cup.empty?}
+    false
   end
 
   def winner
+    if @cups[6].length > @cups[13].length
+      return @name1
+    elsif @cups[6].length < @cups[13].length
+      return @name2
+    else
+      return :draw
+    end
   end
 end
