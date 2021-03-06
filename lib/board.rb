@@ -31,30 +31,52 @@ class Board
   end
 
   def make_move(start_pos, current_player_name)
-      stones = @cups[start_pos].length
-      @cups[start_pos] = []
-      current_cup = start_pos + 1
-      complete_round = false
-      until stones == 0 && complete_round == true
-        debugger
-        unless current_player_name == @name1 && current_cup == 13 # other player cup
-          @cups[current_cup].push(:stone) 
-          stones -= 1
-        end
-        case current_cup 
-        when 13
-          complete_round = true if stones == 0 && @cups[current_cup].length == 1 #1 stone in the last position
-          current_cup = 0 #rotates counter_clockwise
-        else
-          complete_round = true if stones == 0 && @cups[current_cup].length == 1 #1 stone in the last position
-          current_cup += 1
-        end
+    other_store = get_other_store_idx(current_player_name)
+    other_store == 13 ? current_store = 6 : current_store = 13
+
+    stones = @cups[start_pos].length
+    @cups[start_pos] = []
+    current_cup = start_pos + 1
+
+    until stones == 0
+      unless current_cup == other_store
+        @cups[current_cup].push(:stone) 
+        stones -= 1
       end
+      previous_cup = current_cup
+      current_cup == 13? current_cup = 0 : current_cup += 1
+      
+    end
+
+    render
+    next_turn(previous_cup)
+
+  end
+
+  def get_other_store_idx(current_player)
+    case current_player
+    when @name1
+      return 13
+    else #@name2
+      return 6
+    end
   end
   
 
   def next_turn(ending_cup_idx)
     # helper method to determine whether #make_move returns :switch, :prompt, or ending_cup_idx
+    case ending_cup_idx
+    when 6 
+      return :prompt
+    when 13
+      return :prompt
+    else
+      if @cups[ending_cup_idx].length == 1 
+        return :switch
+      else
+        return ending_cup_idx
+      end
+    end
   end
 
   def render
